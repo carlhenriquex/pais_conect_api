@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import mysql.connector
 from flask_cors import CORS
 import bcrypt
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time
 
 app = Flask(__name__)
 CORS(app)
@@ -31,7 +31,6 @@ def get_db_connection():
 #     except mysql.connector.Error as erro:
 #         print("Erro ao conectar ao banco:", erro)
 #         return None
-
 
 # === HOME ===
 @app.route("/")
@@ -116,19 +115,22 @@ def dados(aluno_id):
 
         # === ENTRADAS DO ALUNO ===
         cursor = db.cursor(dictionary=True)
-        if mes:
+
+        if mes and (mes != 0):
             cursor.execute("""
                 SELECT id, status, data, hora
                 FROM entradas
                 WHERE aluno_id = %s AND MONTH(data) = %s
+                ORDER BY data DESC, hora DESC
             """, (aluno_id, mes))
-
         else:
             cursor.execute("""
                 SELECT id, status, data, hora
                 FROM entradas
                 WHERE aluno_id = %s
+                ORDER BY data DESC, hora DESC
             """, (aluno_id,))
+
         entradas = cursor.fetchall()
         cursor.close()
 
