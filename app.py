@@ -95,7 +95,7 @@ def dados(aluno_id):
             "entradas": [],
             "comunicados": [],
             "presenca": 0,
-            "status_hoje": []
+            "statusHoje": []
         }
 
         db = get_db_connection()
@@ -105,7 +105,7 @@ def dados(aluno_id):
         # === COMUNICADOS ===
         cursor = db.cursor(dictionary=True)
         cursor.execute("""
-            SELECT id, titulo, imagem_url, conteudo, data_publicacao
+            SELECT id, titulo, imagem_url AS imagemUrl, conteudo AS descricao, data_publicacao AS dataComunicado
             FROM comunicados
             WHERE YEAR(data_publicacao) = %s
             ORDER BY data_publicacao DESC
@@ -118,7 +118,7 @@ def dados(aluno_id):
 
         if mes and (mes != 0):
             cursor.execute("""
-                SELECT id, status, data, hora
+                SELECT id, status, data AS dataEntrada, hora AS horaEntrada
                 FROM entradas
                 WHERE aluno_id = %s AND MONTH(data) = %s
                 ORDER BY data DESC, hora DESC
@@ -147,8 +147,8 @@ def dados(aluno_id):
             status_hoje = [
                 {
                     "status": entrada_hoje["status"],
-                    "data": entrada_hoje["data"],
-                    "hora": entrada_hoje["hora"],
+                    "dataStatus": entrada_hoje["data"],
+                    "horaStatus": entrada_hoje["hora"],
                     "descricao": f"ola mundo, {entrada_hoje['status']}"
                 }
             ]
@@ -157,8 +157,8 @@ def dados(aluno_id):
             status_hoje = [
                 {
                     "status": "Sem registro",
-                    "data": hoje_date,
-                    "hora": hora_atual,
+                    "dataStatus": hoje_date,
+                    "horaStatus": hora_atual,
                     "descricao": "Ainda sem registro hoje"
                 }
             ]
